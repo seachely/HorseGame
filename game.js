@@ -6,23 +6,18 @@ horseImg.src = 'Horse.png';
 
 const horse = {
     x: 50,
-    y: canvas.height / 2,
-    width: 80,  // Adjust based on your image size
-    height: 60,  // Adjust based on your image size
+    y: canvas.height / 2 - 40, // Adjusted to center the larger horse vertically
+    width: 120,  // Increased from 50
+    height: 120, // Increased from 50
     speed: 5,
-    lives: 3
+    lives: 3  // Add this line
 };
 
 let barrels = [];
 let score = 0;
 
 function drawHorse() {
-    if (horseImg.complete) {
-        ctx.drawImage(horseImg, horse.x, horse.y, horse.width, horse.height);
-    } else {
-        ctx.fillStyle = 'brown';
-        ctx.fillRect(horse.x, horse.y, horse.width, horse.height);
-    }
+    ctx.drawImage(horseImg, horse.x, horse.y, horse.width, horse.height);
 }
 
 function drawBarrels() {
@@ -30,14 +25,6 @@ function drawBarrels() {
     barrels.forEach(barrel => {
         ctx.fillRect(barrel.x, barrel.y, barrel.width, barrel.height);
     });
-}
-
-function drawHearts() {
-    ctx.fillStyle = 'red';
-    ctx.font = '30px Arial';
-    for (let i = 0; i < horse.lives; i++) {
-        ctx.fillText('❤️', canvas.width - 40 - i * 35, 30);
-    }
 }
 
 function moveHorse(e) {
@@ -76,6 +63,24 @@ function checkCollision() {
         horse.y < barrel.y + barrel.height &&
         horse.y + horse.height > barrel.y
     );
+}
+
+function drawHearts() {
+    const heartSize = 20;
+    const spacing = 5;
+    const startX = canvas.width - (heartSize + spacing) * horse.lives;
+    
+    ctx.fillStyle = 'red';
+    for (let i = 0; i < horse.lives; i++) {
+        const x = startX + (heartSize + spacing) * i;
+        ctx.beginPath();
+        ctx.moveTo(x + heartSize / 2, 15);
+        ctx.bezierCurveTo(x + heartSize / 2, 12, x, 5, x + heartSize / 4, 5);
+        ctx.bezierCurveTo(x + heartSize / 2, 5, x + heartSize / 2, 12, x + heartSize / 2, 12);
+        ctx.bezierCurveTo(x + heartSize / 2, 12, x + heartSize, 5, x + heartSize * 3 / 4, 5);
+        ctx.bezierCurveTo(x + heartSize, 5, x + heartSize, 12, x + heartSize / 2, 15);
+        ctx.fill();
+    }
 }
 
 function gameLoop() {
@@ -118,7 +123,7 @@ function resetGame() {
     horse.y = canvas.height / 2;
 }
 
-// Add this function to ensure the image is loaded before starting the game
+// Modify this function to start the game immediately
 function startGame() {
     if (horseImg.complete) {
         gameLoop();
